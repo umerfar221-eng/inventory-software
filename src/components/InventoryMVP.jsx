@@ -15,7 +15,7 @@ const [sales, setSales] = useState([]);
 const [expenses, setExpenses] = useState([]);
 
 const safeProducts = Array.isArray(products) ? products : [];
-const safeSales = Array.isArray(sales) ? sales : [];
+const safesales = Array.isArray(sales) ? sales : [];
 const safeExpenses = Array.isArray(expenses) ? expenses : [];
 
   const [form, setForm] = useState({ name: "", category: "", stock: "", price: "" });
@@ -52,7 +52,7 @@ useEffect(() => {
   
   useEffect(() => {
   API.get("/safesales")
-    .then(res => setsafeSales(res.data))
+    .then(res => setsafesales(res.data))
     .catch(err => console.log(err));
   }, []);
 
@@ -111,7 +111,7 @@ const sellProduct = async () => {
     });
 
     const res = await API.get("/safesales");
-    setsafeSales(res.data);
+    setsafesales(res.data);
 
     const updatedProducts = await API.get("/products");
     setProducts(updatedProducts.data);
@@ -139,7 +139,7 @@ const sellProduct = async () => {
       date: new Date().toISOString(),
     };
 
-    setsafeSales(updated);
+    setsafesales(updated);
     setEditingSaleIndex(null);
     setSaleForm({ product: "", quantity: "", client: "", paid: "" });
   };
@@ -187,25 +187,25 @@ const addExpense = () => {
   // ================= STATS =================
   const totalProducts = products.length;
   const totalStock = safeProducts.reduce((s, p) => s + p.stock, 0);
-  const totalRevenue = safeSales.reduce((s, p) => s + Number(p.paid || 0), 0);
+  const totalRevenue = safesales.reduce((s, p) => s + Number(p.paid || 0), 0);
   const totalExpenses = safeExpenses.reduce((s, e) => s + Number(e.amount || 0), 0);
   const netProfit = totalRevenue - totalExpenses;
 
   const today = new Date().toDateString();
-  const dailysafeSales = safeSales
+  const dailysafesales = safesales
   .filter(s => new Date(s.date).toDateString() === today)
   .reduce((sum, s) => sum + Number(s.paid || 0), 0);
 
-  const monthlysafeSales = safeSales
+  const monthlysafesales = safesales
   .filter(s => new Date(s.date).getMonth() === new Date().getMonth())
   .reduce((sum, s) => sum + Number(s.paid || 0), 0);
 
-const chartData = safeSales.map((s) => ({
+const chartData = safesales.map((s) => ({
   name: s.date ? new Date(s.date).toLocaleString() : "",
   revenue: Number(s.paid || 0),
 }));
 
-const profitChartData = safeSales.map((s) => ({
+const profitChartData = safesales.map((s) => ({
   name: s.date ? new Date(s.date).toLocaleDateString() : "",
   profit: s.paid,
 }));
@@ -214,7 +214,7 @@ const profitChartData = safeSales.map((s) => ({
   // ================= FILTER LOGIC (FIX) =================
 const now = new Date();
 
-  const filteredsafeSales = safeSales.filter((s) => {
+  const filteredsafesales = safesales.filter((s) => {
   const saleDate = new Date(s.date);
 
   if (filterType === "daily") return saleDate.toDateString() === now.toDateString();
@@ -230,7 +230,7 @@ const now = new Date();
   return true;
 });
 
-const filteredChartData = filteredsafeSales.map((s) => ({
+const filteredChartData = filteredsafesales.map((s) => ({
   name: s.date ? new Date(s.date).toLocaleString() : "",
   revenue: Number(s.paid || 0),
 }));
@@ -263,8 +263,8 @@ const filteredChartData = filteredsafeSales.map((s) => ({
               <Card title="Revenue" value={totalRevenue} />
               <Card title="Expenses" value={totalExpenses} />
               <Card title="Profit" value={netProfit} />
-              <Card title="Daily" value={dailysafeSales} />
-              <Card title="Monthly" value={monthlysafeSales} />
+              <Card title="Daily" value={dailysafesales} />
+              <Card title="Monthly" value={monthlysafesales} />
             </div>
               {/* FILTER BUTTONS */}
               <div className="flex gap-2 mb-4">
@@ -417,7 +417,7 @@ const filteredChartData = filteredsafeSales.map((s) => ({
             </div>
 
             <div className="bg-white p-6 rounded-xl border">
-              <p>Total safeSales: {safesales.length}</p>
+              <p>Total safesales: {safesales.length}</p>
               <p>Total Products: {products.length}</p>
               <p>Total Expenses: {expenses.length}</p>
 
