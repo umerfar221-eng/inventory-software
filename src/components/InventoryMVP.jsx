@@ -10,7 +10,7 @@ import html2canvas from "html2canvas";
 export default function InventoryMVP() {
 
   // ================= STATE =================
- const [products, setProducts] = useState([]);
+const [products, setProducts] = useState([]);
 const [sales, setSales] = useState([]);
 const [expenses, setExpenses] = useState([]);
 
@@ -88,15 +88,14 @@ const addProduct = () => {
     .then(res => setProducts(res.data));
 };
 
-  const filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+const filteredProducts = safeProducts.filter(p =>
+  p.name.toLowerCase().includes(search.toLowerCase())
+);
 
   // ================= SALES =================
 const sellProduct = async () => {
   try {
-    const product = safeproducts.find(p => p.name === saleForm.product);
-
+    const product = safeProducts.find(p => p.name === saleForm.product);
     if (!product) return alert("Select product");
 
     const qty = Number(saleForm.quantity);
@@ -206,10 +205,10 @@ const chartData = safeSales.map((s) => ({
   revenue: Number(s.paid || 0),
 }));
 
-  const profitChartData = safeSales.map((s) => ({
-    name: new Date(s.date).toLocaleDateString(),
-    profit: s.paid,
-  }));
+const profitChartData = safeSales.map((s) => ({
+  name: s.date ? new Date(s.date).toLocaleDateString() : "",
+  profit: s.paid,
+}));
 
   const isLoss = netProfit < 0;
   // ================= FILTER LOGIC (FIX) =================
