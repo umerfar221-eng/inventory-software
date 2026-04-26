@@ -25,11 +25,20 @@ export default function InventoryMVP() {
 
   // ================= SAVE =================
 
-  useEffect(() => {
-    API.get("/products")
-    .then(res => setProducts(res.data))
-    .catch(err => console.log(err));
-  }, []);
+useEffect(() => {
+  API.get("/products")
+    .then(res => {
+      if (Array.isArray(res.data)) {
+        setProducts(res.data);
+      } else {
+        setProducts([]);
+      }
+    })
+    .catch(err => {
+      console.log("API ERROR:", err);
+      setProducts([]);
+    });
+}, []);
 
   useEffect(() => {
   API.get("/expenses")
