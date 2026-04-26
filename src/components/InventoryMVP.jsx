@@ -11,8 +11,13 @@ export default function InventoryMVP() {
 
   // ================= STATE =================
   const [products, setProducts] = useState([]);
-  const [sales, setSales] = useState([]);
+  const [safeSales, setsafeSales] = useState([]);
   const [expenses, setExpenses] = useState([]);
+  const safeProducts = Array.isArray(products) ? products : [];
+  const safeSales = Array.isArray(safeSales) ? safeSales : [];
+  const safeProducts = Array.isArray(products) ? products : [];
+  const safeSales = Array.isArray(safesales) ? safesales : [];
+  const safeExpenses = Array.isArray(expenses) ? expenses : [];
 
   const [form, setForm] = useState({ name: "", category: "", stock: "", price: "" });
   const [saleForm, setSaleForm] = useState({ product: "", quantity: "", client: "", paid: "" });
@@ -47,8 +52,8 @@ useEffect(() => {
   }, []);
   
   useEffect(() => {
-  API.get("/sales")
-    .then(res => setSales(res.data))
+  API.get("/safeSales")
+    .then(res => setsafeSales(res.data))
     .catch(err => console.log(err));
   }, []);
 
@@ -99,7 +104,7 @@ const sellProduct = async () => {
     const paid = Number(saleForm.paid) || 0;
     const total = qty * product.price;
 
-    await API.post("/sales", {
+    await API.post("/safesales", {
       product: saleForm.product,
       quantity: qty,
       client: saleForm.client,
@@ -107,8 +112,8 @@ const sellProduct = async () => {
       pending: total - paid,
     });
 
-    const res = await API.get("/sales");
-    setSales(res.data);
+    const res = await API.get("/safesales");
+    setsafeSales(res.data);
 
     const updatedProducts = await API.get("/products");
     setProducts(updatedProducts.data);
@@ -120,7 +125,7 @@ const sellProduct = async () => {
   }
 };
   const updateSale = () => {
-    const updated = [...sales];
+    const updated = [...safesales];
     const product = products.find(p => p.name === saleForm.product);
     if (!product) return;
 
@@ -136,13 +141,13 @@ const sellProduct = async () => {
       date: new Date().toISOString(),
     };
 
-    setSales(updated);
+    setsafeSales(updated);
     setEditingSaleIndex(null);
     setSaleForm({ product: "", quantity: "", client: "", paid: "" });
   };
 
   const deleteSale = (i) =>
-    setSales(sales.filter((_, index) => index !== i));
+    setsafeSales(safesales.filter((_, index) => index !== i));
 
   // ================= EXPENSE =================
 const addExpense = () => {
@@ -183,26 +188,26 @@ const addExpense = () => {
 
   // ================= STATS =================
   const totalProducts = products.length;
-  const totalStock = products.reduce((s, p) => s + p.stock, 0);
-  const totalRevenue = sales.reduce((s, p) => s + Number(p.paid || 0), 0);
-  const totalExpenses = expenses.reduce((s, e) => s + Number(e.amount || 0), 0);
+  const totalStock = safeProducts.reduce((s, p) => s + p.stock, 0);
+  const totalRevenue = safesales.reduce((s, p) => s + Number(p.paid || 0), 0);
+  const totalExpenses = safeexpenses.reduce((s, e) => s + Number(e.amount || 0), 0);
   const netProfit = totalRevenue - totalExpenses;
 
   const today = new Date().toDateString();
-const dailySales = sales
+  const dailysafeSales = safesales
   .filter(s => new Date(s.date).toDateString() === today)
   .reduce((sum, s) => sum + Number(s.paid || 0), 0);
 
-const monthlySales = sales
+const monthlysafeSales = safesales
   .filter(s => new Date(s.date).getMonth() === new Date().getMonth())
   .reduce((sum, s) => sum + Number(s.paid || 0), 0);
 
-const chartData = sales.map((s) => ({
+const chartData = safesales.map((s) => ({
   name: s.date ? new Date(s.date).toLocaleString() : "",
   revenue: Number(s.paid || 0),
 }));
 
-  const profitChartData = sales.map((s) => ({
+  const profitChartData = safesales.map((s) => ({
     name: new Date(s.date).toLocaleDateString(),
     profit: s.paid,
   }));
@@ -211,7 +216,7 @@ const chartData = sales.map((s) => ({
   // ================= FILTER LOGIC (FIX) =================
 const now = new Date();
 
-const filteredSales = sales.filter((s) => {
+const filteredsafeSales = safesales.filter((s) => {
   const saleDate = new Date(s.date);
 
   if (filterType === "daily") return saleDate.toDateString() === now.toDateString();
@@ -227,7 +232,7 @@ const filteredSales = sales.filter((s) => {
   return true;
 });
 
-const filteredChartData = filteredSales.map((s) => ({
+const filteredChartData = filteredsafeSales.map((s) => ({
   name: s.date ? new Date(s.date).toLocaleString() : "",
   revenue: Number(s.paid || 0),
 }));
@@ -260,8 +265,8 @@ const filteredChartData = filteredSales.map((s) => ({
               <Card title="Revenue" value={totalRevenue} />
               <Card title="Expenses" value={totalExpenses} />
               <Card title="Profit" value={netProfit} />
-              <Card title="Daily" value={dailySales} />
-              <Card title="Monthly" value={monthlySales} />
+              <Card title="Daily" value={dailysafeSales} />
+              <Card title="Monthly" value={monthlysafeSales} />
             </div>
               {/* FILTER BUTTONS */}
               <div className="flex gap-2 mb-4">
@@ -326,7 +331,7 @@ const filteredChartData = filteredSales.map((s) => ({
             {/* INVOICE */}
             <div className="bg-white p-6 rounded-xl border">
               <div id="invoice">
-                {sales.map((s, i) => (
+                {safesales.map((s, i) => (
                   <div key={i} className="flex justify-between border-b py-3">
                     <span>
                        {s.product} ({s.quantity}) - {s.client}
@@ -414,7 +419,7 @@ const filteredChartData = filteredSales.map((s) => ({
             </div>
 
             <div className="bg-white p-6 rounded-xl border">
-              <p>Total Sales: {sales.length}</p>
+              <p>Total safeSales: {safesales.length}</p>
               <p>Total Products: {products.length}</p>
               <p>Total Expenses: {expenses.length}</p>
 
