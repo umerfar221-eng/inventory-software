@@ -96,7 +96,7 @@ const addProduct = () => {
   // ================= SALES =================
 const sellProduct = async () => {
   try {
-    const product = products.find(p => p.name === saleForm.product);
+    const product = safeproducts.find(p => p.name === saleForm.product);
 
     if (!product) return alert("Select product");
 
@@ -202,12 +202,12 @@ const monthlysafeSales = safesales
   .filter(s => new Date(s.date).getMonth() === new Date().getMonth())
   .reduce((sum, s) => sum + Number(s.paid || 0), 0);
 
-const chartData = safesales.map((s) => ({
+const chartData = safeSales.map((s) => ({
   name: s.date ? new Date(s.date).toLocaleString() : "",
   revenue: Number(s.paid || 0),
 }));
 
-  const profitChartData = safesales.map((s) => ({
+  const profitChartData = safeSales.map((s) => ({
     name: new Date(s.date).toLocaleDateString(),
     profit: s.paid,
   }));
@@ -317,7 +317,7 @@ const filteredChartData = filteredsafeSales.map((s) => ({
               <div className="grid md:grid-cols-4 gap-4">
                 <select name="product" value={saleForm.product} onChange={handleSaleChange} className="border p-2 rounded">
                   <option value="">Select Product</option>
-                  {products.map((p) => <option key={p.id} value={p.name}>{p.name}</option>)}
+                  {safeproducts.map((p) => <option key={p.id} value={p.name}>{p.name}</option>)}
                 </select>
                 <input name="quantity" value={saleForm.quantity} onChange={handleSaleChange} placeholder="Qty" className="border p-2 rounded"/>
                 <input name="client" value={saleForm.client} onChange={handleSaleChange} placeholder="Client" className="border p-2 rounded"/>
