@@ -10,14 +10,13 @@ import html2canvas from "html2canvas";
 export default function InventoryMVP() {
 
   // ================= STATE =================
-  const [products, setProducts] = useState([]);
-  const [safeSales, setsafeSales] = useState([]);
-  const [expenses, setExpenses] = useState([]);
-  const safeProducts = Array.isArray(products) ? products : [];
-  const safeSales = Array.isArray(safeSales) ? safeSales : [];
-  const safeProducts = Array.isArray(products) ? products : [];
-  const safeSales = Array.isArray(safesales) ? safesales : [];
-  const safeExpenses = Array.isArray(expenses) ? expenses : [];
+ const [products, setProducts] = useState([]);
+const [sales, setSales] = useState([]);
+const [expenses, setExpenses] = useState([]);
+
+const safeProducts = Array.isArray(products) ? products : [];
+const safeSales = Array.isArray(sales) ? sales : [];
+const safeExpenses = Array.isArray(expenses) ? expenses : [];
 
   const [form, setForm] = useState({ name: "", category: "", stock: "", price: "" });
   const [saleForm, setSaleForm] = useState({ product: "", quantity: "", client: "", paid: "" });
@@ -52,7 +51,7 @@ useEffect(() => {
   }, []);
   
   useEffect(() => {
-  API.get("/safeSales")
+  API.get("/safesales")
     .then(res => setsafeSales(res.data))
     .catch(err => console.log(err));
   }, []);
@@ -189,16 +188,16 @@ const addExpense = () => {
   // ================= STATS =================
   const totalProducts = products.length;
   const totalStock = safeProducts.reduce((s, p) => s + p.stock, 0);
-  const totalRevenue = safesales.reduce((s, p) => s + Number(p.paid || 0), 0);
-  const totalExpenses = safeexpenses.reduce((s, e) => s + Number(e.amount || 0), 0);
+  const totalRevenue = safeSales.reduce((s, p) => s + Number(p.paid || 0), 0);
+  const totalExpenses = safeExpenses.reduce((s, e) => s + Number(e.amount || 0), 0);
   const netProfit = totalRevenue - totalExpenses;
 
   const today = new Date().toDateString();
-  const dailysafeSales = safesales
+  const dailysafeSales = safeSales
   .filter(s => new Date(s.date).toDateString() === today)
   .reduce((sum, s) => sum + Number(s.paid || 0), 0);
 
-const monthlysafeSales = safesales
+  const monthlysafeSales = safeSales
   .filter(s => new Date(s.date).getMonth() === new Date().getMonth())
   .reduce((sum, s) => sum + Number(s.paid || 0), 0);
 
@@ -216,7 +215,7 @@ const chartData = safeSales.map((s) => ({
   // ================= FILTER LOGIC (FIX) =================
 const now = new Date();
 
-const filteredsafeSales = safesales.filter((s) => {
+  const filteredsafeSales = safeSales.filter((s) => {
   const saleDate = new Date(s.date);
 
   if (filterType === "daily") return saleDate.toDateString() === now.toDateString();
