@@ -32,11 +32,17 @@ const safeExpenses = Array.isArray(expenses) ? expenses : [];
 useEffect(() => {
   API.get("/products")
     .then(res => {
-  setProducts(res.data);
-}) else {
+      if (Array.isArray(res.data)) {
+        setProducts(res.data);
+      } else {
         setProducts([]);
       }
     })
+    .catch(err => {
+      console.log("API ERROR:", err);
+      setProducts([]);
+    });
+}, []);
     .catch(err => {
       console.log("API ERROR:", err);
       setProducts([]);
@@ -50,7 +56,7 @@ useEffect(() => {
   }, []);
   
   useEffect(() => {
-  API.get("/safeSales")
+  API.get("/safesales")
     .then(res => setSales(res.data))
     .catch(err => console.log(err));
   }, []);
@@ -101,7 +107,7 @@ const sellProduct = async () => {
     const paid = Number(saleForm.paid) || 0;
     const total = qty * product.price;
 
-    await API.post("/safeSales", {
+    await API.post("/safesales", {
       product: saleForm.product,
       quantity: qty,
       client: saleForm.client,
@@ -109,7 +115,7 @@ const sellProduct = async () => {
       pending: total - paid,
     });
 
-    const res = await API.get("/safeSales");
+    const res = await API.get("/safesales");
     setSales(res.data);
 
     const updatedProducts = await API.get("/products");
@@ -300,7 +306,7 @@ const filteredChartData = filteredsafeSales.map((s) => ({
             <div className="bg-white p-6 rounded-xl border mb-6">
               <input placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} className="border p-2 mb-4 rounded w-full"/>
             {filteredProducts.map((p, i) => (
-  <div key={p.id} className="flex justify-between border-b py-2">
+  <div key={p._id} className="flex justify-between border-b py-2">
     {p.name} ({p.stock})
     <button onClick={() => deleteProduct(p.id)} className="bg-red-500 text-white px-2 rounded">
       Delete
