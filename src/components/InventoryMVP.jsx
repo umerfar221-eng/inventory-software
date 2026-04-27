@@ -15,7 +15,7 @@ const [sales, setSales] = useState([]);
 const [expenses, setExpenses] = useState([]);
 
 const safeProducts = Array.isArray(products) ? products : [];
-const safesales = Array.isArray(sales) ? sales : [];
+const safeSales = Array.isArray(sales) ? sales : [];
 const safeExpenses = Array.isArray(expenses) ? expenses : [];
 
   const [form, setForm] = useState({ name: "", category: "", stock: "", price: "" });
@@ -52,7 +52,7 @@ useEffect(() => {
   
   useEffect(() => {
   API.get("/safesales")
-    .then(res => setsafesales(res.data))
+    .then(res => setSales(res.data))
     .catch(err => console.log(err));
   }, []);
 
