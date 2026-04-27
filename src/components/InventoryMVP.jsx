@@ -51,7 +51,7 @@ useEffect(() => {
   }, []);
   
   useEffect(() => {
-  API.get("/safesales")
+  API.get("/safeSales")
     .then(res => setSales(res.data))
     .catch(err => console.log(err));
   }, []);
@@ -102,7 +102,7 @@ const sellProduct = async () => {
     const paid = Number(saleForm.paid) || 0;
     const total = qty * product.price;
 
-    await API.post("/safesales", {
+    await API.post("/safeSales", {
       product: saleForm.product,
       quantity: qty,
       client: saleForm.client,
@@ -110,8 +110,8 @@ const sellProduct = async () => {
       pending: total - paid,
     });
 
-    const res = await API.get("/safesales");
-    setsafesales(res.data);
+    const res = await API.get("/safeSales");
+    setSales(res.data);
 
     const updatedProducts = await API.get("/products");
     setProducts(updatedProducts.data);
@@ -123,7 +123,7 @@ const sellProduct = async () => {
   }
 };
   const updateSale = () => {
-    const updated = [...safesales];
+    const updated = [...safeSales];
     const product = products.find(p => p.name === saleForm.product);
     if (!product) return;
 
@@ -139,13 +139,13 @@ const sellProduct = async () => {
       date: new Date().toISOString(),
     };
 
-    setsafesales(updated);
+    setSales(updated);
     setEditingSaleIndex(null);
     setSaleForm({ product: "", quantity: "", client: "", paid: "" });
   };
 
   const deleteSale = (i) =>
-    setsafeSales(safesales.filter((_, index) => index !== i));
+    setSales(safeSales.filter((_, index) => index !== i));
 
   // ================= EXPENSE =================
 const addExpense = () => {
@@ -187,25 +187,25 @@ const addExpense = () => {
   // ================= STATS =================
   const totalProducts = products.length;
   const totalStock = safeProducts.reduce((s, p) => s + p.stock, 0);
-  const totalRevenue = safesales.reduce((s, p) => s + Number(p.paid || 0), 0);
+  const totalRevenue = safeSales.reduce((s, p) => s + Number(p.paid || 0), 0);
   const totalExpenses = safeExpenses.reduce((s, e) => s + Number(e.amount || 0), 0);
   const netProfit = totalRevenue - totalExpenses;
 
   const today = new Date().toDateString();
-  const dailysafesales = safesales
+  const dailysafeSales = safeSales
   .filter(s => new Date(s.date).toDateString() === today)
   .reduce((sum, s) => sum + Number(s.paid || 0), 0);
 
-  const monthlysafesales = safesales
+  const monthlysafeSales = safeSales
   .filter(s => new Date(s.date).getMonth() === new Date().getMonth())
   .reduce((sum, s) => sum + Number(s.paid || 0), 0);
 
-const chartData = safesales.map((s) => ({
+const chartData = safeSales.map((s) => ({
   name: s.date ? new Date(s.date).toLocaleString() : "",
   revenue: Number(s.paid || 0),
 }));
 
-const profitChartData = safesales.map((s) => ({
+const profitChartData = safeSales.map((s) => ({
   name: s.date ? new Date(s.date).toLocaleDateString() : "",
   profit: s.paid,
 }));
@@ -214,7 +214,7 @@ const profitChartData = safesales.map((s) => ({
   // ================= FILTER LOGIC (FIX) =================
 const now = new Date();
 
-  const filteredsafesales = safesales.filter((s) => {
+  const filteredsafeSales = safeSales.filter((s) => {
   const saleDate = new Date(s.date);
 
   if (filterType === "daily") return saleDate.toDateString() === now.toDateString();
@@ -230,7 +230,7 @@ const now = new Date();
   return true;
 });
 
-const filteredChartData = filteredsafesales.map((s) => ({
+const filteredChartData = filteredsafeSales.map((s) => ({
   name: s.date ? new Date(s.date).toLocaleString() : "",
   revenue: Number(s.paid || 0),
 }));
@@ -263,8 +263,8 @@ const filteredChartData = filteredsafesales.map((s) => ({
               <Card title="Revenue" value={totalRevenue} />
               <Card title="Expenses" value={totalExpenses} />
               <Card title="Profit" value={netProfit} />
-              <Card title="Daily" value={dailysafesales} />
-              <Card title="Monthly" value={monthlysafesales} />
+              <Card title="Daily" value={dailysafeSales} />
+              <Card title="Monthly" value={monthlysafeSales} />
             </div>
               {/* FILTER BUTTONS */}
               <div className="flex gap-2 mb-4">
@@ -315,7 +315,7 @@ const filteredChartData = filteredsafesales.map((s) => ({
               <div className="grid md:grid-cols-4 gap-4">
                 <select name="product" value={saleForm.product} onChange={handleSaleChange} className="border p-2 rounded">
                   <option value="">Select Product</option>
-                  {safeproducts.map((p) => <option key={p.id} value={p.name}>{p.name}</option>)}
+                  {safeProducts.map((p) => <option key={p.id} value={p.name}>{p.name}</option>)}
                 </select>
                 <input name="quantity" value={saleForm.quantity} onChange={handleSaleChange} placeholder="Qty" className="border p-2 rounded"/>
                 <input name="client" value={saleForm.client} onChange={handleSaleChange} placeholder="Client" className="border p-2 rounded"/>
@@ -329,7 +329,7 @@ const filteredChartData = filteredsafesales.map((s) => ({
             {/* INVOICE */}
             <div className="bg-white p-6 rounded-xl border">
               <div id="invoice">
-                {safesales.map((s, i) => (
+                {safeSales.map((s, i) => (
                   <div key={i} className="flex justify-between border-b py-3">
                     <span>
                        {s.product} ({s.quantity}) - {s.client}
@@ -417,7 +417,7 @@ const filteredChartData = filteredsafesales.map((s) => ({
             </div>
 
             <div className="bg-white p-6 rounded-xl border">
-              <p>Total safesales: {safesales.length}</p>
+              <p>Total safeSales: {safeSales.length}</p>
               <p>Total Products: {products.length}</p>
               <p>Total Expenses: {expenses.length}</p>
 
