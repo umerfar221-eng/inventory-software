@@ -28,23 +28,14 @@ const safeExpenses = Array.isArray(expenses) ? expenses : [];
   const [filterType, setFilterType] = useState("all");
 
   // ================= SAVE =================
-
 useEffect(() => {
   API.get("/products")
     .then(res => {
-      if (Array.isArray(res.data)) {
-        setProducts(res.data);
-      } else {
-        setProducts([]);
-      }
+      console.log("PRODUCT API:", res.data);
+      setProducts(Array.isArray(res.data) ? res.data : []);
     })
     .catch(err => {
-      console.log("API ERROR:", err);
-      setProducts([]);
-    });
-}, []);
-    .catch(err => {
-      console.log("API ERROR:", err);
+      console.log("ERROR:", err);
       setProducts([]);
     });
 }, []);
