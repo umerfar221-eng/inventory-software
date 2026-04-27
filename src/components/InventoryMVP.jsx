@@ -32,9 +32,8 @@ const safeExpenses = Array.isArray(expenses) ? expenses : [];
 useEffect(() => {
   API.get("/products")
     .then(res => {
-      if (Array.isArray(res.data)) {
-        setProducts(res.data);
-      } else {
+  setProducts(res.data);
+}) else {
         setProducts([]);
       }
     })
@@ -315,7 +314,7 @@ const filteredChartData = filteredsafeSales.map((s) => ({
               <div className="grid md:grid-cols-4 gap-4">
                 <select name="product" value={saleForm.product} onChange={handleSaleChange} className="border p-2 rounded">
                   <option value="">Select Product</option>
-                  {safeProducts.map((p) => <option key={p.id} value={p.name}>{p.name}</option>)}
+                  {safeProducts.map((p) => (<option key={p._id || p.id} value={p.name}>{p.name}</option>))}
                 </select>
                 <input name="quantity" value={saleForm.quantity} onChange={handleSaleChange} placeholder="Qty" className="border p-2 rounded"/>
                 <input name="client" value={saleForm.client} onChange={handleSaleChange} placeholder="Client" className="border p-2 rounded"/>
@@ -367,7 +366,7 @@ const filteredChartData = filteredsafeSales.map((s) => ({
                 <div>
                   {e.title} - {e.amount}
                   <br />
-                  <small>{new Date(e.date).toLocaleString()}</small>
+                  <small>{e.date ? new Date(e.date).toLocaleString() : ""}</small>
                   </div>
                 <button onClick={() => deleteExpense(i)} className="bg-red-500 text-white px-2 rounded">Delete</button>
               </div>
