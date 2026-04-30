@@ -384,19 +384,7 @@ const filteredChartData = filteredSales.map((s) => ({
 >
   Add
 </button>
- <button
-    onClick={() => alert("TEST CLICK")}
-    style={{
-      padding: "20px",
-      background: "red",
-      color: "white",
-      marginTop: "20px",
-      zIndex: 9999,
-      position: "relative"
-    }}
-  >
-    TEST BUTTON
-  </button>
+
             </div>
 
             {safeExpenses.map((e, i) => (
