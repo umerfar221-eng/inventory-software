@@ -91,6 +91,19 @@ const filteredProducts = safeProducts.filter(p =>
   // ================= SALES =================
 const sellProduct = async () => {
   try {
+    const handleDelete = async (id) => {
+  console.log("DELETE CLICKED ID:", id);
+
+  try {
+    const res = await API.delete(`/sales/${id}`);
+    console.log(res.data);
+
+    const updated = await API.get("/sales");
+    setSales(updated.data);
+
+  } catch (err) {
+    console.log(err);
+  }};
     const product = safeProducts.find(p => p.name === saleForm.product);
     if (!product) return alert("Select product");
 
@@ -335,7 +348,7 @@ const filteredChartData = filteredSales.map((s) => ({
                     <div className="flex gap-2">
                       <button onClick={() => generateSingleInvoice(s)} className="bg-blue-600 text-white px-2 rounded">PDF</button>
                       <button onClick={() => { setSaleForm(s); setEditingSaleIndex(i); }} className="bg-yellow-500 text-white px-2 rounded">Edit</button>
-                      <button onClick={() => deleteSale(i)} className="bg-red-500 text-white px-2 rounded">Delete</button>
+                      <button onClick={() => handleDelete(s.id)} className="bg-red-500 text-white px-2 rounded">Delete</button>
                     </div>
                   </div>
                 ))}
