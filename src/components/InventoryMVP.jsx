@@ -99,7 +99,9 @@ const sellProduct = async () => {
     const paid = Number(saleForm.paid) || 0;
     const total = qty * product.price;
 
-    await API.post("/sales", {
+    await axios.post(
+  "https://inventory-backend-production-e00e.up.railway.app/sales",
+  { 
       product: saleForm.product,
       quantity: qty,
       client: saleForm.client,
