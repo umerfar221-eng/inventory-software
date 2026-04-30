@@ -162,19 +162,22 @@ const handleDelete = async (id) => {
 
   // ================= EXPENSE =================
 const addExpense = () => {
+  console.log("EXPENSE FORM:", expenseForm);
+
   API.post("/expenses", {
     ...expenseForm,
     amount: Number(expenseForm.amount),
     date: new Date().toISOString(),
   })
-  .then(() => {
-    return API.get("/expenses");
-  })
-  .then(res => {
-    setExpenses(res.data);
-    setExpenseForm({ title: "", amount: "" });
-  })
-  .catch(err => console.log(err));
+    .then(() => API.get("/expenses"))
+    .then(res => {
+      console.log("EXPENSE API:", res.data);
+
+      setExpenses(Array.isArray(res.data) ? res.data : []);
+
+      setExpenseForm({ title: "", amount: "" });
+    })
+    .catch(err => console.log("ERROR:", err));
 };
 
   const deleteExpense = (i) =>
@@ -343,7 +346,7 @@ const filteredChartData = filteredSales.map((s) => ({
             <div className="bg-white p-6 rounded-xl border">
               <div id="invoice">
                 {Sales.map((s, i) => (
-                  <div key={i} className="flex justify-between border-b py-3">
+                  <div key={e.id} className="flex justify-between border-b py-3">
                     <span>
                        {s.product} ({s.quantity}) - {s.client}
                        <br />
@@ -372,10 +375,28 @@ const filteredChartData = filteredSales.map((s) => ({
             <div className="bg-white p-6 rounded-xl border mb-6">
               <input name="title" value={expenseForm.title} onChange={handleExpenseChange} placeholder="Title" className="border p-2 mr-2"/>
               <input name="amount" value={expenseForm.amount} onChange={handleExpenseChange} placeholder="Amount" className="border p-2"/>
-              <button onClick={addExpense} className="ml-2 bg-red-600 text-white px-4 py-2 rounded">Add</button>
+<button
+  onClick={() => alert("CLICK WORKING")}
+  className="ml-2 bg-red-600 text-white px-4 py-2 rounded relative z-50"
+>
+  Add
+</button>
+ <button
+    onClick={() => alert("TEST CLICK")}
+    style={{
+      padding: "20px",
+      background: "red",
+      color: "white",
+      marginTop: "20px",
+      zIndex: 9999,
+      position: "relative"
+    }}
+  >
+    TEST BUTTON
+  </button>
             </div>
 
-            {expenses.map((e, i) => (
+            {safeExpenses.map((e, i) => (
               <div key={i} className="flex justify-between bg-white p-3 mb-2 rounded">
                 <div>
                   {e.title} - {e.amount}
@@ -393,7 +414,7 @@ const filteredChartData = filteredSales.map((s) => ({
           <>
             <h2 className="text-2xl font-bold mb-4">Profit Analytics</h2>
 
-            <div className="bg-white p-6 rounded-xl border mb-6">
+            <div className="bg-white p-6 rounded-xl border mb-6 relative z-50">
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={profitChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
