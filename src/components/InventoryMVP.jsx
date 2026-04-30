@@ -99,9 +99,7 @@ const sellProduct = async () => {
     const paid = Number(saleForm.paid) || 0;
     const total = qty * product.price;
 
-    await axios.post(
-  "https://inventory-backend-production-e00e.up.railway.app/sales",
-  { 
+await API.post("/sales", {
       product: saleForm.product,
       quantity: qty,
       client: saleForm.client,
@@ -151,7 +149,7 @@ const handleDelete = async (id) => {
       quantity: qty,
       paid,
       pending: total - paid,
-      date: new Date().toISOString(),
+      date: new Date().toISOString().slice(0, 19).replace("T", " "),
     };
 
     setSales(updated);
@@ -167,11 +165,11 @@ const addExpense = () => {
   console.log("ADD EXPENSE CLICKED");
   console.log("FORM:", expenseForm);
 
-  API.post("/expenses", {
-    ...expenseForm,
-    amount: Number(expenseForm.amount),
-    date: new Date().toISOString(),
-  })
+API.post("/expenses", {
+  ...expenseForm,
+  amount: Number(expenseForm.amount),
+  date: new Date().toISOString().slice(0, 19).replace("T", " "),
+})
     .then(res => {
       console.log("POST RESPONSE:", res.data);
       return API.get("/expenses");
@@ -187,9 +185,12 @@ const addExpense = () => {
       console.log("ERROR:", err.response?.data || err.message);
     });
 };
-  const deleteExpense = (i) =>
-    setExpenses(expenses.filter((_, index) => index !== i));
-
+ const deleteExpense = async (id) => {
+  await API.delete(`/expenses/${id}`);
+  const res = await API.get("/expenses");
+  setExpenses(res.data);
+};
+<button onClick={() => deleteExpense(e.id)}></button>
   // ================= PDF =================
   const generateSingleInvoice = (s) => {
     const pdf = new jsPDF();
