@@ -346,7 +346,7 @@ const filteredChartData = filteredSales.map((s) => ({
             <div className="bg-white p-6 rounded-xl border">
               <div id="invoice">
                 {Sales.map((s, i) => (
-                  <div key={e.id} className="flex justify-between border-b py-3">
+                  <div key={s.id} className="flex justify-between border-b py-3">
                     <span>
                        {s.product} ({s.quantity}) - {s.client}
                        <br />
