@@ -376,7 +376,10 @@ const filteredChartData = filteredSales.map((s) => ({
               <input name="title" value={expenseForm.title} onChange={handleExpenseChange} placeholder="Title" className="border p-2 mr-2"/>
               <input name="amount" value={expenseForm.amount} onChange={handleExpenseChange} placeholder="Amount" className="border p-2"/>
 <button
-  onClick={() => alert("CLICK WORKING")}
+  onClick={() => {
+    console.log("ADD EXPENSE CLICKED");
+    addExpense();
+  }}
   className="ml-2 bg-red-600 text-white px-4 py-2 rounded relative z-50"
 >
   Add
