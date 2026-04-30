@@ -164,24 +164,29 @@ const handleDelete = async (id) => {
 
   // ================= EXPENSE =================
 const addExpense = () => {
-  console.log("EXPENSE FORM:", expenseForm);
+  console.log("ADD EXPENSE CLICKED");
+  console.log("FORM:", expenseForm);
 
   API.post("/expenses", {
     ...expenseForm,
     amount: Number(expenseForm.amount),
     date: new Date().toISOString(),
   })
-    .then(() => API.get("/expenses"))
     .then(res => {
-      console.log("EXPENSE API:", res.data);
+      console.log("POST RESPONSE:", res.data);
+      return API.get("/expenses");
+    })
+    .then(res => {
+      console.log("GET EXPENSES:", res.data);
 
       setExpenses(Array.isArray(res.data) ? res.data : []);
 
       setExpenseForm({ title: "", amount: "" });
     })
-    .catch(err => console.log("ERROR:", err));
+    .catch(err => {
+      console.log("ERROR:", err.response?.data || err.message);
+    });
 };
-
   const deleteExpense = (i) =>
     setExpenses(expenses.filter((_, index) => index !== i));
 
