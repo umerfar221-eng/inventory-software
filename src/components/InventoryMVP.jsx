@@ -91,19 +91,7 @@ const filteredProducts = safeProducts.filter(p =>
   // ================= SALES =================
 const sellProduct = async () => {
   try {
-    const handleDelete = async (id) => {
-  console.log("DELETE CLICKED ID:", id);
-
-  try {
-    const res = await API.delete(`/sales/${id}`);
-    console.log(res.data);
-
-    const updated = await API.get("/sales");
-    setSales(updated.data);
-
-  } catch (err) {
-    console.log(err);
-  }};
+  
     const product = safeProducts.find(p => p.name === saleForm.product);
     if (!product) return alert("Select product");
 
@@ -131,6 +119,22 @@ const sellProduct = async () => {
     console.log("ERROR:", err);
   }
 };
+const handleDelete = async (id) => {
+  console.log("DELETE CLICKED ID:", id);
+
+  try {
+    const res = await API.delete(`/sales/${id}`);
+    console.log("RESPONSE:", res.data);
+
+    const updated = await API.get("/sales");
+    setSales(updated.data);
+
+  } catch (err) {
+    console.log("ERROR:", err);
+  }
+};
+ console.log("HANDLE DELETE EXISTS:", typeof handleDelete);
+
   const updateSale = () => {
     const updated = [...Sales];
     const product = products.find(p => p.name === saleForm.product);
@@ -310,7 +314,7 @@ const filteredChartData = filteredSales.map((s) => ({
             <div className="bg-white p-6 rounded-xl border mb-6">
               <input placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} className="border p-2 mb-4 rounded w-full"/>
             {filteredProducts.map((p, i) => (
-  <div key={p._id} className="flex justify-between border-b py-2">
+  <div key={p.id} className="flex justify-between border-b py-2">
     {p.name} ({p.stock})
     <button onClick={() => deleteProduct(p.id)} className="bg-red-500 text-white px-2 rounded">
       Delete
