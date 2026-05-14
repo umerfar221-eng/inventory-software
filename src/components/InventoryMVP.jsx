@@ -13,6 +13,8 @@ export default function InventoryMVP() {
 const [products, setProducts] = useState([]);
 const [sales, setSales] = useState([]);
 const [expenses, setExpenses] = useState([]);
+const [purchases, setPurchases] = useState([]);
+
 
 const safeProducts = Array.isArray(products) ? products : [];
 const Sales = Array.isArray(sales) ? sales : [];
@@ -21,7 +23,16 @@ const safeExpenses = Array.isArray(expenses) ? expenses : [];
   const [form, setForm] = useState({ name: "", category: "", stock: "", price: "" });
   const [saleForm, setSaleForm] = useState({ product: "", quantity: "", client: "", paid: "" });
   const [expenseForm, setExpenseForm] = useState({ title: "", amount: "" });
-
+  const [purchaseForm, setPurchaseForm] = useState({
+  supplier: "",
+  product: "",
+  quantity: "",
+  cost_price: "",
+  selling_price: "",
+  container_name: "",
+  cash_paid: "",
+  bank_paid: ""
+});
   const [editingSaleIndex, setEditingSaleIndex] = useState(null);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -52,13 +63,19 @@ useEffect(() => {
     .catch(err => console.log(err));
   }, []);
 
+  useEffect(() => {
+  API.get("/purchases")
+    .then(res => setPurchases(res.data))
+    .catch(err => console.log(err));
+}, []);
+
   console.log("PRODUCTS:", products);
 
   // ================= HANDLERS =================
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const handleSaleChange = (e) => setSaleForm({ ...saleForm, [e.target.name]: e.target.value });
   const handleExpenseChange = (e) => setExpenseForm({ ...expenseForm, [e.target.name]: e.target.value });
-
+  const handlePurchaseChange = (e) => setPurchaseForm({ ...purchaseForm, [e.target.name]: e.target.value });
   // ================= PRODUCT =================
 const addProduct = () => {
   if (!form.name || !form.stock || !form.price) return alert("Fill all fields");
@@ -160,8 +177,68 @@ const handleDelete = async (id) => {
   const deleteSale = (i) =>
     setSales(Sales.filter((_, index) => index !== i));
 
-  // ================= EXPENSE =================
+// ================= EXPENSE =================
+
 const addExpense = () => {
+  console.log("ADD EXPENSE CLICKED");
+
+  API.post("/expenses", {
+    ...expenseForm,
+    amount: Number(expenseForm.amount),
+    date: new Date().toISOString().slice(0, 19).replace("T", " "),
+  })
+    .then(() => API.get("/expenses"))
+    .then(res => {
+      setExpenses(Array.isArray(res.data) ? res.data : []);
+
+      setExpenseForm({
+        title: "",
+        amount: ""
+      });
+    })
+    .catch(err => console.log(err));
+};
+
+
+// ================= PURCHASE =================
+
+const addPurchase = () => {
+
+  const totalPaid =
+    Number(purchaseForm.cash_paid || 0) +
+    Number(purchaseForm.bank_paid || 0);
+
+  const totalCost =
+    Number(purchaseForm.quantity || 0) *
+    Number(purchaseForm.cost_price || 0);
+
+  API.post("/purchases", {
+    ...purchaseForm,
+    quantity: Number(purchaseForm.quantity),
+    cost_price: Number(purchaseForm.cost_price),
+    selling_price: Number(purchaseForm.selling_price),
+    cash_paid: Number(purchaseForm.cash_paid),
+    bank_paid: Number(purchaseForm.bank_paid),
+    pending: totalCost - totalPaid,
+    date: new Date().toISOString().slice(0, 19).replace("T", " ")
+  })
+    .then(() => API.get("/purchases"))
+    .then(res => {
+      setPurchases(res.data);
+
+      setPurchaseForm({
+        supplier: "",
+        product: "",
+        quantity: "",
+        cost_price: "",
+        selling_price: "",
+        container_name: "",
+        cash_paid: "",
+        bank_paid: ""
+      });
+    })
+    .catch(err => console.log(err));
+};
   console.log("ADD EXPENSE CLICKED");
   console.log("FORM:", expenseForm);
 
@@ -269,6 +346,7 @@ const filteredChartData = filteredSales.map((s) => ({
 
         <button onClick={() => setActiveTab("dashboard")} className="bg-blue-600 w-full py-2 rounded mb-2">Dashboard</button>
         <button onClick={() => setActiveTab("expenses")} className="bg-gray-700 w-full py-2 rounded mb-2">Expenses</button>
+        <button onClick={() => setActiveTab("purchases")} className="bg-gray-700 w-full py-2 rounded mb-2">Purchases</button>
         <button onClick={() => setActiveTab("profit")} className="bg-gray-700 w-full py-2 rounded mb-2">Profit</button>
         <button onClick={() => setActiveTab("accounting")} className="bg-gray-700 w-full py-2 rounded">Accounting</button>
       </div>
@@ -407,6 +485,127 @@ const filteredChartData = filteredSales.map((s) => ({
             ))}
           </>
         )}
+
+      {/* PURCHASES */}
+{activeTab === "purchases" && (
+  <>
+    <h2 className="text-2xl font-bold mb-4">Purchases</h2>
+
+    {/* PURCHASE FORM */}
+    <div className="bg-white p-6 rounded-xl border mb-6">
+
+      <div className="grid md:grid-cols-4 gap-4">
+
+        <input
+          name="supplier"
+          value={purchaseForm.supplier}
+          onChange={handlePurchaseChange}
+          placeholder="Supplier"
+          className="border p-2 rounded"
+        />
+
+        <select
+          name="product"
+          value={purchaseForm.product}
+          onChange={handlePurchaseChange}
+          className="border p-2 rounded"
+        >
+          <option value="">Select Product</option>
+
+          {safeProducts.map((p) => (
+            <option key={p.id} value={p.name}>
+              {p.name}
+            </option>
+          ))}
+        </select>
+
+        <input
+          name="quantity"
+          value={purchaseForm.quantity}
+          onChange={handlePurchaseChange}
+          placeholder="Quantity"
+          className="border p-2 rounded"
+        />
+
+        <input
+          name="cost_price"
+          value={purchaseForm.cost_price}
+          onChange={handlePurchaseChange}
+          placeholder="Cost Price"
+          className="border p-2 rounded"
+        />
+
+        <input
+          name="selling_price"
+          value={purchaseForm.selling_price}
+          onChange={handlePurchaseChange}
+          placeholder="Selling Price"
+          className="border p-2 rounded"
+        />
+
+        <input
+          name="container_name"
+          value={purchaseForm.container_name}
+          onChange={handlePurchaseChange}
+          placeholder="Container Name"
+          className="border p-2 rounded"
+        />
+
+        <input
+          name="cash_paid"
+          value={purchaseForm.cash_paid}
+          onChange={handlePurchaseChange}
+          placeholder="Cash Paid"
+          className="border p-2 rounded"
+        />
+
+        <input
+          name="bank_paid"
+          value={purchaseForm.bank_paid}
+          onChange={handlePurchaseChange}
+          placeholder="Bank Paid"
+          className="border p-2 rounded"
+        />
+
+      </div>
+
+      <button
+        onClick={addPurchase}
+        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Add Purchase
+      </button>
+    </div>
+
+    {/* PURCHASE TABLE */}
+    <div className="bg-white p-6 rounded-xl border">
+
+      {purchases.map((p) => (
+
+        <div
+          key={p.id}
+          className="flex justify-between border-b py-3"
+        >
+          <div>
+            <strong>{p.product}</strong> ({p.quantity})
+            <br />
+            Supplier: {p.supplier}
+            <br />
+            Pending: {p.pending}
+          </div>
+
+          <div>
+            Cash: {p.cash_paid}
+            <br />
+            Bank: {p.bank_paid}
+          </div>
+        </div>
+
+      ))}
+
+    </div>
+  </>
+)}
 
         {/* PROFIT */}
         {activeTab === "profit" && (
