@@ -178,8 +178,10 @@ const handleDelete = async (id) => {
     setSales(Sales.filter((_, index) => index !== i));
 
 // ================= EXPENSE =================
+// ================= EXPENSE =================
 
 const addExpense = () => {
+
   console.log("ADD EXPENSE CLICKED");
 
   API.post("/expenses", {
@@ -187,7 +189,10 @@ const addExpense = () => {
     amount: Number(expenseForm.amount),
     date: new Date().toISOString().slice(0, 19).replace("T", " "),
   })
-    .then(() => API.get("/expenses"))
+    .then(res => {
+      console.log("POST RESPONSE:", res.data);
+      return API.get("/expenses");
+    })
     .then(res => {
       setExpenses(Array.isArray(res.data) ? res.data : []);
 
@@ -196,7 +201,9 @@ const addExpense = () => {
         amount: ""
       });
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      console.log("ERROR:", err.response?.data || err.message);
+    });
 };
 
 
@@ -239,35 +246,18 @@ const addPurchase = () => {
     })
     .catch(err => console.log(err));
 };
-  console.log("ADD EXPENSE CLICKED");
-  console.log("FORM:", expenseForm);
 
-API.post("/expenses", {
-  ...expenseForm,
-  amount: Number(expenseForm.amount),
-  date: new Date().toISOString().slice(0, 19).replace("T", " "),
-})
-    .then(res => {
-      console.log("POST RESPONSE:", res.data);
-      return API.get("/expenses");
-    })
-    .then(res => {
-      console.log("GET EXPENSES:", res.data);
 
-      setExpenses(Array.isArray(res.data) ? res.data : []);
+// ================= DELETE EXPENSE =================
 
-      setExpenseForm({ title: "", amount: "" });
-    })
-    .catch(err => {
-      console.log("ERROR:", err.response?.data || err.message);
-    });
-};
- const deleteExpense = async (id) => {
+const deleteExpense = async (id) => {
   await API.delete(`/expenses/${id}`);
+
   const res = await API.get("/expenses");
+
   setExpenses(res.data);
 };
-<button onClick={() => deleteExpense(e.id)}></button>
+
   // ================= PDF =================
   const generateSingleInvoice = (s) => {
     const pdf = new jsPDF();
@@ -480,7 +470,7 @@ const filteredChartData = filteredSales.map((s) => ({
                   <br />
                   <small>{e.date ? new Date(e.date).toLocaleString() : ""}</small>
                   </div>
-                <button onClick={() => deleteExpense(i)} className="bg-red-500 text-white px-2 rounded">Delete</button>
+                <button onClick={() => deleteExpense(e.id)} className="bg-red-500 text-white px-2 rounded">Delete</button>
               </div>
             ))}
           </>
