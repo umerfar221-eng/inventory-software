@@ -311,17 +311,20 @@ const profitChartData = Sales.map((s) => ({
 }));
 
   const isLoss = netProfit < 0;
-  // ================= FILTER LOGIC (FIX) =================
+ // ================= FILTER LOGIC =================
+
 const now = new Date();
 
-  const filteredSales = Sales.filter((s) => {
-  const clientLedger = Sales.filter((s) =>
+const clientLedger = Sales.filter((s) =>
   s.client?.toLowerCase().includes(ledgerSearch.toLowerCase())
 );
+
+const filteredSales = Sales.filter((s) => {
   const saleDate = new Date(s.date);
 
-
-  if (filterType === "daily") return saleDate.toDateString() === now.toDateString();
+  if (filterType === "daily") {
+    return saleDate.toDateString() === now.toDateString();
+  }
 
   if (filterType === "weekly") {
     const weekAgo = new Date();
@@ -329,7 +332,9 @@ const now = new Date();
     return saleDate >= weekAgo;
   }
 
-  if (filterType === "monthly") return saleDate.getMonth() === now.getMonth();
+  if (filterType === "monthly") {
+    return saleDate.getMonth() === now.getMonth();
+  }
 
   return true;
 });
@@ -338,6 +343,7 @@ const filteredChartData = filteredSales.map((s) => ({
   name: s.date ? new Date(s.date).toLocaleString() : "",
   revenue: Number(s.paid || 0),
 }));
+
 const ledgerTotalPaid = clientLedger.reduce(
   (sum, s) => sum + Number(s.paid || 0),
   0
@@ -349,6 +355,7 @@ const ledgerTotalPending = clientLedger.reduce(
 );
 
 const ledgerTotalSales = clientLedger.length;
+
   // ================= UI =================
   return (
     <div className="min-h-screen bg-[#f1f5f9] flex">
