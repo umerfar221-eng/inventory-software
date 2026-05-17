@@ -701,6 +701,75 @@ Status:
 )}
 
         {activeTab === "accounting" && (
+           <>
+          {/* CLIENT LEDGER */}
+{activeTab === "ledger" && (
+    <h2 className="text-2xl font-bold mb-4">
+      Client Ledger
+    </h2>
+
+    {/* SEARCH */}
+    <div className="bg-white p-6 rounded-xl border mb-6">
+
+      <input
+        type="text"
+        placeholder="Search Client..."
+        value={ledgerSearch}
+        onChange={(e) => setLedgerSearch(e.target.value)}
+        className="border p-2 rounded w-full"
+      />
+
+    </div>
+
+    {/* STATS */}
+    <div className="grid md:grid-cols-3 gap-4 mb-6">
+
+      <Card
+        title="Total Sales"
+        value={ledgerTotalSales}
+      />
+
+      <Card
+        title="Total Paid"
+        value={ledgerTotalPaid}
+      />
+
+      <Card
+        title="Pending Amount"
+        value={ledgerTotalPending}
+      />
+
+    </div>
+
+    {/* LEDGER TABLE */}
+    <div className="bg-white p-6 rounded-xl border">
+
+      {clientLedger.map((s) => (
+
+        <div
+          key={s.id}
+          className="flex justify-between border-b py-3"
+        >
+          <div>
+            <strong>{s.client}</strong>
+            <br />
+            Product: {s.product}
+            <br />
+            Qty: {s.quantity}
+          </div>
+
+          <div>
+            Paid: {s.paid}
+            <br />
+            Pending: {s.pending}
+          </div>
+        </div>
+
+      ))}
+
+    </div>
+  </>
+)}
           <>
             <h2 className="text-2xl font-bold mb-4">Accounting</h2>
 
