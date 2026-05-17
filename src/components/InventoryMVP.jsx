@@ -30,6 +30,7 @@ const safeExpenses = Array.isArray(expenses) ? expenses : [];
   cost_price: "",
   selling_price: "",
   container_name: "",
+  container_id: "",
   cash_paid: "",
   bank_paid: ""
 });
@@ -240,6 +241,7 @@ const addPurchase = () => {
         cost_price: "",
         selling_price: "",
         container_name: "",
+        container_id: "",
         cash_paid: "",
         bank_paid: ""
       });
@@ -549,6 +551,13 @@ const filteredChartData = filteredSales.map((s) => ({
           placeholder="Container Name"
           className="border p-2 rounded"
         />
+        <input
+        name="container_id"
+        value={purchaseForm.container_id}
+        onChange={handlePurchaseChange}
+        placeholder="Container ID"
+        className="border p-2 rounded"
+        />
 
         <input
           name="cash_paid"
@@ -577,9 +586,22 @@ const filteredChartData = filteredSales.map((s) => ({
     </div>
 
     {/* PURCHASE TABLE */}
+    <input
+  type="text"
+  placeholder="Search Supplier or Product..."
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className="border p-2 rounded w-full mb-4"
+/>
     <div className="bg-white p-6 rounded-xl border">
 
-      {purchases.map((p) => (
+      {purchases
+  .filter(
+    (p) =>
+      p.product?.toLowerCase().includes(search.toLowerCase()) ||
+      p.supplier?.toLowerCase().includes(search.toLowerCase())
+  )
+  .map((p) => (
 
         <div
           key={p.id}
@@ -590,7 +612,20 @@ const filteredChartData = filteredSales.map((s) => ({
             <br />
             Supplier: {p.supplier}
             <br />
+Container: {p.container_name}
+<br />
+Container ID: {p.container_id}
+            <br />
             Pending: {p.pending}
+
+<br />
+
+Status:
+{Number(p.pending) > 0 ? (
+  <span className="text-red-600 font-bold"> Credit</span>
+) : (
+  <span className="text-green-600 font-bold"> Paid</span>
+)}
           </div>
 
           <div>
