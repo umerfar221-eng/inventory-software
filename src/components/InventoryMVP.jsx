@@ -693,17 +693,10 @@ Status:
             )}
           </>
         )}
-        {/* PURCHASES */}
-{activeTab === "purchases" && (
-  <>
-    ...
-  </>
-)}
 
-        {activeTab === "accounting" && (
-           <>
-          {/* CLIENT LEDGER */}
+         {/* CLIENT LEDGER */}
 {activeTab === "ledger" && (
+  <>
     <h2 className="text-2xl font-bold mb-4">
       Client Ledger
     </h2>
@@ -723,22 +716,9 @@ Status:
 
     {/* STATS */}
     <div className="grid md:grid-cols-3 gap-4 mb-6">
-
-      <Card
-        title="Total Sales"
-        value={ledgerTotalSales}
-      />
-
-      <Card
-        title="Total Paid"
-        value={ledgerTotalPaid}
-      />
-
-      <Card
-        title="Pending Amount"
-        value={ledgerTotalPending}
-      />
-
+      <Card title="Total Sales" value={ledgerTotalSales} />
+      <Card title="Total Paid" value={ledgerTotalPaid} />
+      <Card title="Pending Amount" value={ledgerTotalPending} />
     </div>
 
     {/* LEDGER TABLE */}
@@ -770,37 +750,42 @@ Status:
     </div>
   </>
 )}
-          <>
-            <h2 className="text-2xl font-bold mb-4">Accounting</h2>
+{/* ACCOUNTING */}
+{activeTab === "accounting" && (
+  <>
+    <div className="grid md:grid-cols-3 gap-4 mb-6">
+      <Card title="Revenue" value={totalRevenue} />
+      <Card title="Expenses" value={totalExpenses} />
+      <Card title="Profit" value={netProfit} />
+    </div>
 
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
-              <Card title="Revenue" value={totalRevenue} />
-              <Card title="Expenses" value={totalExpenses} />
-              <Card title="Profit" value={netProfit} />
-            </div>
+    <div className="bg-white p-6 rounded-xl border">
+      <p>Total Sales: {Sales.length}</p>
+      <p>Total Products: {products.length}</p>
+      <p>Total Expenses: {expenses.length}</p>
 
-            <div className="bg-white p-6 rounded-xl border">
-              <p>Total Sales: {Sales.length}</p>
-              <p>Total Products: {products.length}</p>
-              <p>Total Expenses: {expenses.length}</p>
-
-              <p className="mt-4 font-bold">
-                Status: {netProfit > 0 ? "Profit 📈" : "Loss 📉"}
-              </p>
-            </div>
-          </>
-        )}
+            <p className="mt-4 font-bold">
+        Status: {netProfit > 0 ? "Profit 📈" : "Loss 📉"}
+      </p>
+    </div>
+  </>
+)}
 
       </div>
     </div>
   );
 }
-
+           
 function Card({ title, value }) {
   return (
-    <div className="bg-white p-4 rounded-xl border">
-      <p className="text-sm text-gray-500">{title}</p>
-      <h2 className="text-lg font-bold">{value}</h2>
+    <div className="bg-white p-4 rounded-xl border shadow-sm">
+      <p className="text-sm text-gray-500">
+        {title}
+      </p>
+
+      <h2 className="text-2xl font-bold text-gray-800 mt-2">
+        {value}
+      </h2>
     </div>
   );
 }
