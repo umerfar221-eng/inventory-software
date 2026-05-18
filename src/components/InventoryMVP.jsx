@@ -220,6 +220,9 @@ const addPurchase = () => {
   const totalCost =
     Number(purchaseForm.quantity || 0) *
     Number(purchaseForm.cost_price || 0);
+    if (totalPaid > totalCost) {
+  return alert("Paid amount cannot exceed total cost");
+}
 
   API.post("/purchases", {
     ...purchaseForm,
@@ -687,7 +690,15 @@ Container: {p.container_name}
 <br />
 Container ID: {p.container_id}
             <br />
-            Pending: {p.pending}
+            {Number(p.pending) < 0 ? (
+  <span className="text-green-600 font-bold">
+    Advance: {Math.abs(p.pending)}
+  </span>
+) : (
+  <span>
+    Pending: {p.pending}
+  </span>
+)}
 
 <br />
 
