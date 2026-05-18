@@ -864,7 +864,7 @@ Status:
       </div>
     </div>
   );
-}
+
            
 function Card({ title, value }) {
   return (
