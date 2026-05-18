@@ -254,14 +254,6 @@ const addPurchase = () => {
 // ================= DELETE EXPENSE =================
 
 const deleteExpense = async (id) => {
-
-  await API.delete(`/expenses/${id}`);
-
-  const res = await API.get("/expenses");
-
-  setExpenses(res.data);
-};
-
 const deletePurchase = async (id) => {
   try {
 
@@ -314,27 +306,14 @@ const generateSingleInvoice = (s) => {
 
   const pdf = new jsPDF();
 
-  pdf.setFontSize(18);
-  pdf.text("Purchase Receipt", 20, 20);
+  pdf.text("Invoice Receipt", 20, 20);
+  pdf.text(`Product: ${s.product}`, 20, 40);
+  pdf.text(`Client: ${s.client}`, 20, 50);
+  pdf.text(`Paid: ${s.paid}`, 20, 60);
 
-  pdf.setFontSize(12);
+  pdf.save(`${s.product}.pdf`);
+};
 
-  pdf.text(`Supplier: ${p.supplier}`, 20, 40);
-  pdf.text(`Product: ${p.product}`, 20, 50);
-  pdf.text(`Quantity: ${p.quantity}`, 20, 60);
-
-  pdf.text(`Cost Price: ${p.cost_price}`, 20, 70);
-  pdf.text(`Selling Price: ${p.selling_price}`, 20, 80);
-
-  pdf.text(`Container: ${p.container_name}`, 20, 90);
-  pdf.text(`Container ID: ${p.container_id}`, 20, 100);
-
-  pdf.text(`Cash Paid: ${p.cash_paid}`, 20, 110);
-  pdf.text(`Bank Paid: ${p.bank_paid}`, 20, 120);
-
-  pdf.text(`Pending: ${p.pending}`, 20, 130);
-
-  pdf.save(`${p.product}-purchase.pdf`);
 };
     const pdf = new jsPDF();
     pdf.text("Invoice Receipt", 20, 20);
