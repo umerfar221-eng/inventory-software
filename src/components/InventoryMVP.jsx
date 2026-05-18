@@ -254,6 +254,14 @@ const addPurchase = () => {
 // ================= DELETE EXPENSE =================
 
 const deleteExpense = async (id) => {
+
+  await API.delete(`/expenses/${id}`);
+
+  const res = await API.get("/expenses");
+
+  setExpenses(res.data);
+};
+
 const deletePurchase = async (id) => {
   try {
 
@@ -266,12 +274,6 @@ const deletePurchase = async (id) => {
   } catch (err) {
     console.log("DELETE PURCHASE ERROR:", err);
   }
-};
-  await API.delete(`/expenses/${id}`);
-
-  const res = await API.get("/expenses");
-
-  setExpenses(res.data);
 };
 
   // ================= PDF =================
@@ -314,13 +316,7 @@ const generateSingleInvoice = (s) => {
   pdf.save(`${s.product}.pdf`);
 };
 
-};
-    const pdf = new jsPDF();
-    pdf.text("Invoice Receipt", 20, 20);
-    pdf.text(`Product: ${s.product}`, 20, 40);
-    pdf.text(`Client: ${s.client}`, 20, 50);
-    pdf.text(`Paid: ${s.paid}`, 20, 60);
-    pdf.save(`${s.product}.pdf`);
+
   
 
   const generateInvoice = async () => {
@@ -843,7 +839,7 @@ Status:
       </div>
     </div>
   );
-
+}
            
 function Card({ title, value }) {
   return (
