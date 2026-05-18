@@ -254,6 +254,19 @@ const addPurchase = () => {
 // ================= DELETE EXPENSE =================
 
 const deleteExpense = async (id) => {
+  const deletePurchase = async (id) => {
+  try {
+
+    await API.delete(`/purchases/${id}`);
+
+    const res = await API.get("/purchases");
+
+    setPurchases(res.data);
+
+  } catch (err) {
+    console.log("DELETE PURCHASE ERROR:", err);
+  }
+};
   await API.delete(`/expenses/${id}`);
 
   const res = await API.get("/expenses");
@@ -651,11 +664,29 @@ Status:
 )}
           </div>
 
-          <div>
-            Cash: {p.cash_paid}
-            <br />
-            Bank: {p.bank_paid}
-          </div>
+          <div className="flex flex-col items-end gap-2">
+
+  <div>
+    Cash: {p.cash_paid}
+    <br />
+    Bank: {p.bank_paid}
+  </div>
+
+  <button
+    onClick={() => generatePurchasePDF(p)}
+    className="bg-blue-600 text-white px-3 py-1 rounded"
+  >
+    PDF
+  </button>
+
+  <button
+    onClick={() => deletePurchase(p.id)}
+    className="bg-red-500 text-white px-3 py-1 rounded"
+  >
+    Delete
+  </button>
+
+</div>
         </div>
 
       ))}
