@@ -509,20 +509,6 @@ const ledgerTotalSales = clientLedger.length;
             </div>
 
             {/* SELL */}
-            <div className="bg-white p-6 rounded-xl border mb-6">
-              <div className="grid md:grid-cols-4 gap-4">
-                <select name="product" value={saleForm.product} onChange={handleSaleChange} className="border p-2 rounded">
-                  <option value="">Select Product</option>
-                  {safeProducts.map((p) => (<option key={p._id || p.id} value={p.name}>{p.name}</option>))}
-                </select>
-                <input name="quantity" value={saleForm.quantity} onChange={handleSaleChange} placeholder="Qty" className="border p-2 rounded"/>
-                <input name="client" value={saleForm.client} onChange={handleSaleChange} placeholder="Client" className="border p-2 rounded"/>
-                <input name="paid" value={saleForm.paid} onChange={handleSaleChange} placeholder="Paid" className="border p-2 rounded"/>
-              </div>
-              <button onClick={editingSaleIndex !== null ? updateSale : sellProduct} className="mt-4 bg-green-600 text-white px-4 py-2 rounded">
-                {editingSaleIndex !== null ? "Update Sale" : "Complete Sale"}
-              </button>
-            </div>
 
             {/* INVOICE */}
             <div className="bg-white p-6 rounded-xl border">
@@ -768,8 +754,64 @@ Status:
       Sales Management
     </h2>
 
+    {/* SALES FORM */}
+    <div className="bg-white p-6 rounded-xl border mb-6">
+
+      <div className="grid md:grid-cols-4 gap-4">
+
+        <select
+          name="product"
+          value={saleForm.product}
+          onChange={handleSaleChange}
+          className="border p-2 rounded"
+        >
+          <option value="">Select Product</option>
+
+          {safeProducts.map((p) => (
+            <option key={p.id} value={p.name}>
+              {p.name}
+            </option>
+          ))}
+        </select>
+
+        <input
+          name="quantity"
+          value={saleForm.quantity}
+          onChange={handleSaleChange}
+          placeholder="Quantity"
+          className="border p-2 rounded"
+        />
+
+        <input
+          name="client"
+          value={saleForm.client}
+          onChange={handleSaleChange}
+          placeholder="Client Name"
+          className="border p-2 rounded"
+        />
+
+        <input
+          name="paid"
+          value={saleForm.paid}
+          onChange={handleSaleChange}
+          placeholder="Paid Amount"
+          className="border p-2 rounded"
+        />
+
+      </div>
+
+      <button
+        onClick={sellProduct}
+        className="mt-4 bg-green-600 text-white px-4 py-2 rounded"
+      >
+        Complete Sale
+      </button>
+
+    </div>
+
     {/* SALES STATS */}
     <div className="grid md:grid-cols-3 gap-4 mb-6">
+
       <Card title="Total Sales" value={Sales.length} />
 
       <Card
@@ -787,62 +829,81 @@ Status:
           0
         )}
       />
+
     </div>
+
+    {/* SALES SEARCH */}
+    <input
+      type="text"
+      placeholder="Search Client or Product..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="border p-2 rounded w-full mb-4"
+    />
 
     {/* SALES TABLE */}
     <div className="bg-white p-6 rounded-xl border">
 
-      {Sales.map((s, i) => (
+      {Sales
+        .filter(
+          (s) =>
+            s.product?.toLowerCase().includes(search.toLowerCase()) ||
+            s.client?.toLowerCase().includes(search.toLowerCase())
+        )
+        .map((s, i) => (
 
-        <div
-          key={s.id}
-          className="flex justify-between border-b py-3"
-        >
+          <div
+            key={s.id}
+            className="flex justify-between border-b py-3"
+          >
 
-          <div>
-            <strong>{s.product}</strong>
-            <br />
+            <div>
+              <strong>{s.product}</strong>
+              <br />
 
-            Client: {s.client}
-            <br />
+              Client: {s.client}
+              <br />
 
-            Qty: {s.quantity}
-            <br />
+              Qty: {s.quantity}
+              <br />
 
-            Pending: {s.pending}
-            <br />
+              Paid: {s.paid}
+              <br />
 
-            Status:
-            {Number(s.pending) > 0 ? (
-              <span className="text-red-600 font-bold">
-                Credit
-              </span>
-            ) : (
-              <span className="text-green-600 font-bold">
-                Paid
-              </span>
-            )}
+              Pending: {s.pending}
+              <br />
+
+              Status:
+              {Number(s.pending) > 0 ? (
+                <span className="text-red-600 font-bold">
+                  Credit
+                </span>
+              ) : (
+                <span className="text-green-600 font-bold">
+                  Paid
+                </span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2">
+
+              <button
+                onClick={() => generateSingleInvoice(s)}
+                className="bg-blue-600 text-white px-3 py-1 rounded"
+              >
+                PDF
+              </button>
+
+              <button
+                onClick={() => handleDelete(s.id)}
+                className="bg-red-500 text-white px-3 py-1 rounded"
+              >
+                Delete
+              </button>
+
+            </div>
+
           </div>
-
-          <div className="flex flex-col gap-2">
-
-            <button
-              onClick={() => generateSingleInvoice(s)}
-              className="bg-blue-600 text-white px-3 py-1 rounded"
-            >
-              PDF
-            </button>
-
-            <button
-              onClick={() => handleDelete(s.id)}
-              className="bg-red-500 text-white px-3 py-1 rounded"
-            >
-              Delete
-            </button>
-
-          </div>
-
-        </div>
 
       ))}
 
