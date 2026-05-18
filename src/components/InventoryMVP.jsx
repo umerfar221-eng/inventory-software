@@ -254,7 +254,15 @@ const addPurchase = () => {
 // ================= DELETE EXPENSE =================
 
 const deleteExpense = async (id) => {
-  const deletePurchase = async (id) => {
+
+  await API.delete(`/expenses/${id}`);
+
+  const res = await API.get("/expenses");
+
+  setExpenses(res.data);
+};
+
+const deletePurchase = async (id) => {
   try {
 
     await API.delete(`/purchases/${id}`);
@@ -275,8 +283,34 @@ const deleteExpense = async (id) => {
 };
 
   // ================= PDF =================
-  const generateSingleInvoice = (s) => {
-    const generatePurchasePDF = (p) => {
+  const generatePurchasePDF = (p) => {
+
+  const pdf = new jsPDF();
+
+  pdf.setFontSize(18);
+  pdf.text("Purchase Receipt", 20, 20);
+
+  pdf.setFontSize(12);
+
+  pdf.text(`Supplier: ${p.supplier}`, 20, 40);
+  pdf.text(`Product: ${p.product}`, 20, 50);
+  pdf.text(`Quantity: ${p.quantity}`, 20, 60);
+
+  pdf.text(`Cost Price: ${p.cost_price}`, 20, 70);
+  pdf.text(`Selling Price: ${p.selling_price}`, 20, 80);
+
+  pdf.text(`Container: ${p.container_name}`, 20, 90);
+  pdf.text(`Container ID: ${p.container_id}`, 20, 100);
+
+  pdf.text(`Cash Paid: ${p.cash_paid}`, 20, 110);
+  pdf.text(`Bank Paid: ${p.bank_paid}`, 20, 120);
+
+  pdf.text(`Pending: ${p.pending}`, 20, 130);
+
+  pdf.save(`${p.product}-purchase.pdf`);
+};
+
+const generateSingleInvoice = (s) => {
 
   const pdf = new jsPDF();
 
@@ -308,7 +342,7 @@ const deleteExpense = async (id) => {
     pdf.text(`Client: ${s.client}`, 20, 50);
     pdf.text(`Paid: ${s.paid}`, 20, 60);
     pdf.save(`${s.product}.pdf`);
-  };
+  
 
   const generateInvoice = async () => {
     const canvas = await html2canvas(document.getElementById("invoice"));
@@ -698,12 +732,6 @@ Status:
     Bank: {p.bank_paid}
   </div>
 
-  <button
-    onClick={() => generatePurchasePDF(p)}
-    className="bg-blue-600 text-white px-3 py-1 rounded"
-  >
-    PDF
-  </button>
 <button
   onClick={() => generatePurchasePDF(p)}
   className="bg-blue-600 text-white px-3 py-1 rounded"
