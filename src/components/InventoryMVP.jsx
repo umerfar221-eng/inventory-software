@@ -330,18 +330,37 @@ const generateSingleInvoice = (s) => {
 
   // ================= STATS =================
   const totalProducts = products.length;
+  const totalPurchases = purchases.length;
   const totalPurchasePending = purchases.reduce(
   (sum, p) => sum + Number(p.pending || 0),0);
   const totalStock = safeProducts.reduce((s, p) => s + p.stock, 0);
-  const totalRevenue = Sales.reduce((s, p) => s + Number(p.paid || 0), 0);
-  const totalExpenses = safeExpenses.reduce((s, e) => s + Number(e.amount || 0), 0);
-const netProfit = totalRevenue - totalPurchaseCost - totalExpenses;
-  const totalPurchaseCost = purchases.reduce(
+ const totalRevenue = Sales.reduce(
+  (s, p) => s + Number(p.paid || 0),
+  0
+);
+
+const totalExpenses = safeExpenses.reduce(
+  (s, e) => s + Number(e.amount || 0),
+  0
+);
+
+const totalPurchaseCost = purchases.reduce(
+  (sum, p) =>
+    sum +
+    (Number(p.quantity || 0) *
+    Number(p.cost_price || 0)),
+  0
+);
+
+const netProfit =
+  totalRevenue -
+  totalPurchaseCost -
+  totalExpenses;
   (sum, p) =>
     sum +
     (Number(p.quantity || 0) * Number(p.cost_price || 0)),
   0
-);
+
 
   const today = new Date().toDateString();
   const dailySales = Sales
