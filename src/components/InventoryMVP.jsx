@@ -223,7 +223,6 @@ const addPurchase = () => {
     if (totalPaid > totalCost) {
   return alert("Paid amount cannot exceed total cost");
 }
-
   API.post("/purchases", {
     ...purchaseForm,
     quantity: Number(purchaseForm.quantity),
@@ -340,7 +339,13 @@ const generateSingleInvoice = (s) => {
   const totalStock = safeProducts.reduce((s, p) => s + p.stock, 0);
   const totalRevenue = Sales.reduce((s, p) => s + Number(p.paid || 0), 0);
   const totalExpenses = safeExpenses.reduce((s, e) => s + Number(e.amount || 0), 0);
-  const netProfit = totalRevenue - totalExpenses;
+const netProfit = totalRevenue - totalPurchaseCost - totalExpenses;
+  const totalPurchaseCost = purchases.reduce(
+  (sum, p) =>
+    sum +
+    (Number(p.quantity || 0) * Number(p.cost_price || 0)),
+  0
+);
 
   const today = new Date().toDateString();
   const dailySales = Sales
