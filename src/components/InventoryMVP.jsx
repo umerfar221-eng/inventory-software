@@ -423,6 +423,7 @@ const ledgerTotalSales = clientLedger.length;
         <button onClick={() => setActiveTab("dashboard")} className="bg-blue-600 w-full py-2 rounded mb-2">Dashboard</button>
         <button onClick={() => setActiveTab("expenses")} className="bg-gray-700 w-full py-2 rounded mb-2">Expenses</button>
         <button onClick={() => setActiveTab("purchases")} className="bg-gray-700 w-full py-2 rounded mb-2">Purchases</button>
+        <button onClick={() => setActiveTab("sales")} className="bg-gray-700 w-full py-2 rounded mb-2">Sales</button>
         <button onClick={() => setActiveTab("profit")} className="bg-gray-700 w-full py-2 rounded mb-2">Profit</button>
         <button onClick={() => setActiveTab("accounting")} className="bg-gray-700 w-full py-2 rounded">Accounting</button>
         <button onClick={() => setActiveTab("ledger")} className="bg-gray-700 w-full py-2 rounded mt-2">Client Ledger</button>
@@ -737,6 +738,95 @@ Status:
   </button>
 
 </div>
+        </div>
+
+      ))}
+
+    </div>
+  </>
+)}
+
+{/* SALES */}
+{activeTab === "sales" && (
+  <>
+    <h2 className="text-2xl font-bold mb-4">
+      Sales Management
+    </h2>
+
+    {/* SALES STATS */}
+    <div className="grid md:grid-cols-3 gap-4 mb-6">
+      <Card title="Total Sales" value={Sales.length} />
+
+      <Card
+        title="Received"
+        value={Sales.reduce(
+          (sum, s) => sum + Number(s.paid || 0),
+          0
+        )}
+      />
+
+      <Card
+        title="Pending"
+        value={Sales.reduce(
+          (sum, s) => sum + Number(s.pending || 0),
+          0
+        )}
+      />
+    </div>
+
+    {/* SALES TABLE */}
+    <div className="bg-white p-6 rounded-xl border">
+
+      {Sales.map((s, i) => (
+
+        <div
+          key={s.id}
+          className="flex justify-between border-b py-3"
+        >
+
+          <div>
+            <strong>{s.product}</strong>
+            <br />
+
+            Client: {s.client}
+            <br />
+
+            Qty: {s.quantity}
+            <br />
+
+            Pending: {s.pending}
+            <br />
+
+            Status:
+            {Number(s.pending) > 0 ? (
+              <span className="text-red-600 font-bold">
+                Credit
+              </span>
+            ) : (
+              <span className="text-green-600 font-bold">
+                Paid
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+
+            <button
+              onClick={() => generateSingleInvoice(s)}
+              className="bg-blue-600 text-white px-3 py-1 rounded"
+            >
+              PDF
+            </button>
+
+            <button
+              onClick={() => handleDelete(s.id)}
+              className="bg-red-500 text-white px-3 py-1 rounded"
+            >
+              Delete
+            </button>
+
+          </div>
+
         </div>
 
       ))}
