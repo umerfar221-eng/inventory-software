@@ -330,10 +330,6 @@ const generateSingleInvoice = (s) => {
 
   // ================= STATS =================
   const totalProducts = products.length;
-  const totalPurchases = purchases.length;
-  const totalPurchaseCost = purchases.reduce(
-  (sum, p) =>
-  sum + (Number(p.quantity || 0) * Number(p.cost_price || 0)),0);
   const totalPurchasePending = purchases.reduce(
   (sum, p) => sum + Number(p.pending || 0),0);
   const totalStock = safeProducts.reduce((s, p) => s + p.stock, 0);
